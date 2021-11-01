@@ -1,6 +1,7 @@
 <template>
+<w-app>
 <h1>Todo App</h1>
-<button class="addTodoPlusIcon" @click="addTodoPressed = !addTodoPressed" :style="[addTodoPressed ? {'background-color':'red'} : {'background-color':'green'}]">{{addTodoPressed ? "Close" : "Add Todo"}}</button>
+<w-button class="addTodoPlusIcon" @click="addTodoPressed = !addTodoPressed" :style="[addTodoPressed ? {'background-color':'red'} : {'background-color':'green'}]">{{addTodoPressed ? "Close" : "Add Todo"}}</w-button>
 <form v-if="addTodoPressed" @submit.prevent="addTodo">
   <div class="name">
     <label for="todoName">Todo Name: </label>
@@ -18,8 +19,8 @@
     <div>{{todo.todoDesc}}</div>
     <div @click="removeTodo(index)" class="removeTodo">X</div>
   </div>
-  
 </div>
+</w-app>
 </template>
 
 <script>
