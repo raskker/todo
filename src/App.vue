@@ -1,46 +1,55 @@
 <template>
-<w-app>
-<h1>Todo App</h1>
+<w-app id="app">
+<header>Todo App</header>
 
-<w-button class="addTodoPlusIcon transition-toggle" @click="addTodoPressed = !addTodoPressed" :style="[addTodoPressed ? {'background-color':'red'} : {'background-color':'green'}]">{{addTodoPressed ? "Close" : "Add Todo"}}</w-button>
-
-<w-transition-fade>
-  <form v-if="addTodoPressed" @submit.prevent="addTodo">
-    <div class="name">
-      <w-input v-model="newTodoName" type="text" name="todoName" id="todoName">Todo Name:</w-input>
-    </div>
-    <div class="desc">
-      <w-input v-model="newTodoDesc" type="text" name="todoDesc" id="todoDesc">Todo Beschreibung:</w-input>
-    </div>
-    <w-button id="addTodo" type="submit">Todo speichern</w-button>
-  </form>
-</w-transition-fade>
-
-<div v-for="(todo, index) in todos" v-bind:key="todo.id">
-  <div @click="toggleTodo(todo)" :class="{done: todo.done}">
-    <w-card tile>
-        <template #title>
-          <w-toolbar>
-            <div class="title2">{{todo.todoName}}</div>
-            <div class="spacer"></div>
-            <span @click="removeTodo(index)" class="mdi mdi-close ml2 removeTodo"></span>
-          </w-toolbar>
-        </template>
-        <p class="todoDesc">{{todo.todoDesc}}</p>
-    </w-card>
-  </div>
-  
-  <!-- <div @click="toggleTodo(todo)" :class="{done: todo.done}">
-    <div>{{todo.todoName}}</div>
-    <div>{{todo.todoDesc}}</div>
-    <div @click="removeTodo(index)" class="removeTodo">X</div>
-  </div> -->
-</div>
+<w-flex grow>
+    <aside>
+      <div class="todoBadge">
+        <w-badge>
+        <template #badge>{{countOpenTodos}}</template>
+        <w-button color="primary">
+          <w-icon class="mr1">mdi mdi-check-circle-outline</w-icon>
+          Open Todos
+        </w-button>
+        </w-badge>
+      </div>
+      
+        <w-button class="addTodoPlusIcon transition-toggle" @click="addTodoPressed = !addTodoPressed" :style="[addTodoPressed ? {'background-color':'red'} : {'background-color':'green'}]">{{addTodoPressed ? "Close" : "Add Todo"}}</w-button>
+        <w-transition-fade>
+          <form v-if="addTodoPressed" @submit.prevent="addTodo">
+            <div class="name">
+              <w-input v-model="newTodoName" type="text" name="todoName" id="todoName">Todo Name:</w-input>
+            </div>
+            <div class="desc">
+              <w-input v-model="newTodoDesc" type="text" name="todoDesc" id="todoDesc">Todo Beschreibung:</w-input>
+            </div>
+            <w-button id="addTodo" type="submit">Todo speichern</w-button>
+          </form>
+        </w-transition-fade>
+    </aside>
+    <main class="grow">
+      <div v-for="(todo, index) in todos" v-bind:key="todo.id">
+        <div draggable="true" @click="toggleTodo(todo)" :class="{done: todo.done}" class="todo" :style="[todo.done ? {'opacity':'0.5'}: '']">
+          <w-card>
+            <template #title>
+              <w-toolbar>
+                  <w-checkbox @click="toggleTodo(todo)" v-model="todo.done"></w-checkbox>
+                <div class="title2">{{todo.todoName}}</div>
+                <div class="spacer"></div>
+                <span @click="removeTodo(index)" class="mdi mdi-close ml2 removeTodo"></span>
+              </w-toolbar>
+            </template>
+            <p class="todoDesc">{{todo.todoDesc}}</p>
+          </w-card>
+      </div>
+      </div>
+    </main>
+</w-flex>
 </w-app>
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 export default {
   setup() {
@@ -48,6 +57,9 @@ export default {
     const newTodoDesc = ref("");
     const todos = ref([]);
     const addTodoPressed = ref(false);
+    const countOpenTodos = computed(() => {
+      return todos.value.filter((t) => t.done != true).length;
+    });
 
     function addTodo() {
       todos.value.push({
@@ -76,12 +88,20 @@ export default {
       toggleTodo,
       removeTodo,
       addTodoPressed: addTodoPressed,
+      countOpenTodos,
     };
   },
 };
 </script>
 
 <style>
+header,
+aside,
+main {
+  margin: 4px;
+  padding: 12px;
+}
+
 body {
   font-family: sans-serif;
   padding-top: 1em;
@@ -91,9 +111,15 @@ body {
   margin: 0 auto;
 }
 
-.done {
-  text-decoration: line-through;
+.todo {
+  width: 40%;
+  margin-left: 50px;
+  margin-bottom: 15px;
 }
+
+/* .done {
+  text-decoration: line-through;
+} */
 
 .removeTodo {
   cursor: pointer;
