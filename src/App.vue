@@ -13,6 +13,10 @@
         </w-button>
         </w-badge>
       </div>
+
+      <div class="clearAllCompleted">
+        <w-button @click="deleteAllCompleted">Delete all completed Todos</w-button>
+      </div>
       
         <w-button class="addTodoPlusIcon transition-toggle" @click="addTodoPressed = !addTodoPressed" :style="[addTodoPressed ? {'background-color':'red'} : {'background-color':'green'}]">{{addTodoPressed ? "Close" : "Add Todo"}}</w-button>
         <w-transition-fade>
@@ -80,6 +84,10 @@ export default {
       todos.value.splice(index, 1);
     }
 
+    function deleteAllCompleted() {
+      todos.value = todos.value.filter((t) => t.done === false);
+    }
+
     return {
       todos,
       newTodoName,
@@ -87,6 +95,7 @@ export default {
       addTodo,
       toggleTodo,
       removeTodo,
+      deleteAllCompleted,
       addTodoPressed: addTodoPressed,
       countOpenTodos,
     };
