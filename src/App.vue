@@ -15,7 +15,7 @@
       </div>
 
       <div class="clearAllCompleted">
-        <w-button @click="deleteAllCompleted">Delete all completed Todos</w-button>
+        <w-button :disabled="!isCompletedTodos" @click="deleteAllCompleted">Delete all completed Todos</w-button>
       </div>
       
         <w-button class="addTodoPlusIcon transition-toggle" @click="addTodoPressed = !addTodoPressed" :style="[addTodoPressed ? {'background-color':'red'} : {'background-color':'green'}]">{{addTodoPressed ? "Close" : "Add Todo"}}</w-button>
@@ -71,6 +71,13 @@ export default {
     const countOpenTodos = computed(() => {
       return todos.value.filter((t) => t.done != true).length;
     });
+    const isCompletedTodos = computed(() => {
+      var bool = false;
+      if (todos.value.filter((t) => t.done === true).length > 0) {
+        bool = true;
+      }
+      return bool;
+    });
 
     function addTodo() {
       var d = new Date();
@@ -124,6 +131,7 @@ export default {
       deleteAllCompleted,
       addTodoPressed: addTodoPressed,
       countOpenTodos,
+      isCompletedTodos,
     };
   },
 };
