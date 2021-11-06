@@ -33,15 +33,22 @@
     </aside>
     <main class="grow">
       <div v-for="(todo, index) in todos" v-bind:key="todo.id">
-        <div draggable="true" @click="toggleTodo(todo)" :class="{done: todo.done}" class="todo" :style="[todo.done ? {'opacity':'0.5'}: '']">
+        <div @click="toggleTodo(todo)" :class="{done: todo.done}" class="todo" :style="[todo.done ? {'opacity':'0.5'}: '']">
           <w-card>
             <template #title>
               <w-toolbar>
-                  <w-checkbox @click="toggleTodo(todo)" v-model="todo.done"></w-checkbox>
+                  <w-checkbox @click="toggleTodo(todo)" v-model="todo.done" class="mr5"></w-checkbox>
                 <div class="title2">{{todo.todoName}}</div>
                 <div class="spacer"></div>
                 <span @click="removeTodo(index)" class="mdi mdi-close ml2 removeTodo"></span>
               </w-toolbar>
+            </template>
+            <template #actions>
+              <div class="spacer"></div>
+              <div class="created">
+                <div class="createdAt mr2">erstellt am</div>
+                <div class="timeCreated">{{todo.created}}</div>
+              </div>
             </template>
             <p class="todoDesc">{{todo.todoDesc}}</p>
           </w-card>
@@ -66,11 +73,30 @@ export default {
     });
 
     function addTodo() {
+      var d = new Date();
+      var curr_date = d.getDate();
+      var curr_month = d.getMonth() + 1; //Months are zero based
+      var curr_year = d.getFullYear();
+      var minutes = d.getMinutes();
+      var hours = d.getHours();
+      var time =
+        curr_date +
+        "." +
+        curr_month +
+        "." +
+        curr_year +
+        " " +
+        hours +
+        ":" +
+        minutes +
+        " Uhr";
+
       todos.value.push({
         id: Date.now(),
         done: false,
         todoName: newTodoName.value,
         todoDesc: newTodoDesc.value,
+        created: time,
       });
       newTodoName.value = "";
       newTodoDesc.value = "";
@@ -126,9 +152,10 @@ body {
   margin-bottom: 15px;
 }
 
-/* .done {
-  text-decoration: line-through;
-} */
+.created {
+  font-size: 14px;
+  opacity: 0.4;
+}
 
 .removeTodo {
   cursor: pointer;
