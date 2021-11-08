@@ -1,5 +1,6 @@
 <template>
 <w-app id="app">
+  
 <header>Todo App</header>
 
 <w-flex grow>
@@ -32,28 +33,44 @@
         </w-transition-fade>
     </aside>
     <main class="grow">
-      <div v-for="(todo, index) in todos" v-bind:key="todo.id">
-        <div @click="toggleTodo(todo)" :class="{done: todo.done}" class="todo" :style="[todo.done ? {'opacity':'0.5'}: '']">
+      
+      
+
+        <draggable v-model="todos" class="list-group"
+        :component-data="{
+          tag: 'div',
+          type: 'transition-group',
+          name: !drag ? 'flip-list' : null
+        }" 
+        v-bind="dragOptions"
+        @start="drag = true"
+        @end="drag = false"
+        item-key="id">
+         <template #item="{ element }">
+           <div class="list-group-item">
+        <div @click="toggleTodo(element)" :class="{done: element.done}" class="todo" :style="[element.done ? {'opacity':'0.5'}: '']">
           <w-card>
             <template #title>
               <w-toolbar>
-                  <w-checkbox @click="toggleTodo(todo)" v-model="todo.done" class="mr5"></w-checkbox>
-                <div class="title2">{{todo.todoName}}</div>
+                  <w-checkbox @click="toggleTodo(element)" v-model="element.done" class="mr5"></w-checkbox>
+                <div class="title2">{{element.todoName}}</div>
                 <div class="spacer"></div>
-                <span @click="removeTodo(index)" class="mdi mdi-close ml2 removeTodo"></span>
+                <span @click="removeTodo(element)" class="mdi mdi-close ml2 removeTodo"></span>
               </w-toolbar>
             </template>
             <template #actions>
               <div class="spacer"></div>
               <div class="created">
                 <div class="createdAt mr2">erstellt am</div>
-                <div class="timeCreated">{{todo.created}}</div>
+                <div class="timeCreated">{{element.created}}</div>
               </div>
             </template>
-            <p class="todoDesc">{{todo.todoDesc}}</p>
+            <p class="todoDesc">{{element.todoDesc}}</p>
           </w-card>
       </div>
-      </div>
+           </div>
+         </template>
+        </draggable>
     </main>
 </w-flex>
 </w-app>
@@ -61,8 +78,17 @@
 
 <script>
 import { ref, computed } from "vue";
+import draggable from "vuedraggable";
 
 export default {
+  components: {
+    draggable,
+  },
+  data() {
+    return {
+      drag: false,
+    };
+  },
   setup() {
     const newTodoName = ref("");
     const newTodoDesc = ref("");
@@ -77,6 +103,15 @@ export default {
         bool = true;
       }
       return bool;
+    });
+
+    const dragOptions = computed(() => {
+      return {
+        animation: 200,
+        group: "description",
+        disabled: false,
+        ghostClass: "ghost",
+      };
     });
 
     function addTodo() {
@@ -132,6 +167,7 @@ export default {
       addTodoPressed: addTodoPressed,
       countOpenTodos,
       isCompletedTodos,
+      dragOptions,
     };
   },
 };
@@ -171,5 +207,30 @@ body {
 
 .todoDesc {
   font-size: 0.5em;
+}
+
+/*TEST*/
+
+.button {
+  margin-top: 35px;
+}
+.flip-list-move {
+  transition: transform 0.5s;
+}
+.no-move {
+  transition: transform 0s;
+}
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+.list-group {
+  min-height: 20px;
+}
+.list-group-item {
+  cursor: move;
+}
+.list-group-item i {
+  cursor: pointer;
 }
 </style>
