@@ -222,7 +222,7 @@ body {
 }
 .ghost {
   opacity: 0.5;
-  background: #c8ebfb;
+  background: #feffff;
 }
 .list-group {
   min-height: 20px;
