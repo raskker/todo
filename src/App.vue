@@ -148,8 +148,8 @@ export default {
       todo.done = !todo.done;
     }
 
-    function removeTodo(index) {
-      todos.value.splice(index, 1);
+    function removeTodo(todo) {
+      todos.value = todos.value.filter((t) => t !== todo);
     }
 
     function deleteAllCompleted() {
