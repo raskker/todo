@@ -53,19 +53,24 @@
             <template #title>
               <w-toolbar>
                   <w-checkbox @click="toggleTodo(element)" v-model="element.done" class="mr5"></w-checkbox>
-                <div class="title2">{{element.todoName}}</div>
+                <div v-if="!element.edit" class="title2">{{element.todoName}}</div>
+                <w-input @click.stop v-if="element.edit" v-model="element.todoName" outline class="form-control"></w-input>
                 <div class="spacer"></div>
                 <span @click="removeTodo(element)" class="mdi mdi-close ml2 removeTodo"></span>
               </w-toolbar>
             </template>
             <template #actions>
+              <div class="editTodo">
+                <w-button @click.stop="editTodo(element)" icon="mdi-application-edit"></w-button>
+              </div>
               <div class="spacer"></div>
               <div class="created">
                 <div class="createdAt mr2">erstellt am</div>
                 <div class="timeCreated">{{element.created}}</div>
               </div>
             </template>
-            <p class="todoDesc">{{element.todoDesc}}</p>
+            <p v-if="!element.edit" class="todoDesc">{{element.todoDesc}}</p>
+            <w-input @click.stop v-if="element.edit" v-model="element.todoDesc" outline class="form-control"></w-input>
           </w-card>
       </div>
            </div>
@@ -139,6 +144,7 @@ export default {
         todoName: newTodoName.value,
         todoDesc: newTodoDesc.value,
         created: time,
+        edit: false,
       });
       newTodoName.value = "";
       newTodoDesc.value = "";
@@ -156,6 +162,10 @@ export default {
       todos.value = todos.value.filter((t) => t.done === false);
     }
 
+    function editTodo(todo) {
+      todo.edit = !todo.edit;
+    }
+
     return {
       todos,
       newTodoName,
@@ -168,6 +178,7 @@ export default {
       countOpenTodos,
       isCompletedTodos,
       dragOptions,
+      editTodo,
     };
   },
 };
