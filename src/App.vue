@@ -61,7 +61,7 @@
             </template>
             <template #actions>
               <div class="editTodo">
-                <w-button @click.stop="editTodo(element)" icon="mdi-application-edit"></w-button>
+                <w-button @click.stop="editTodo(element)" title="Todo bearbeiten"><w-icon class="mr1">mdi mdi-file-document-edit</w-icon><span v-if="element.edit">Speichern</span></w-button>
               </div>
               <div class="spacer"></div>
               <div class="created">
