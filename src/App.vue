@@ -1,84 +1,131 @@
 <template>
-<w-app id="app">
-  
-<header>Todo App</header>
-
-<w-flex grow>
-    <aside>
-      <div class="todoBadge">
-        <w-badge>
-        <template #badge>{{countOpenTodos}}</template>
-        <w-button color="primary">
-          <w-icon class="mr1">mdi mdi-check-circle-outline</w-icon>
-          Open Todos
-        </w-button>
-        </w-badge>
+  <w-app id="app">
+    <w-flex wrap>
+      <div class="xs12 pa1">
+        <div class="todoBadge">
+          <w-badge>
+            <template #badge>{{ countOpenTodos }}</template>
+            <w-button color="primary">
+              <w-icon class="mr1">mdi mdi-check-circle-outline</w-icon>
+              Open Todos
+            </w-button>
+          </w-badge>
+        </div>
       </div>
-
-      <div class="clearAllCompleted">
-        <w-button :disabled="!isCompletedTodos" @click="deleteAllCompleted">Delete all completed Todos</w-button>
-      </div>
-      
+      <div class="xs2 pa1">
         <w-button class="addTodoPlusIcon transition-toggle" @click="addTodoPressed = !addTodoPressed" :style="[addTodoPressed ? {'background-color':'red'} : {'background-color':'green'}]">{{addTodoPressed ? "Close" : "Add Todo"}}</w-button>
         <w-transition-fade>
           <form v-if="addTodoPressed" @submit.prevent="addTodo">
             <div class="name">
-              <w-input v-model="newTodoName" type="text" name="todoName" id="todoName">Todo Name:</w-input>
+              <w-input
+                v-model="newTodoName"
+                type="text"
+                name="todoName"
+                id="todoName"
+                >Todo Name:</w-input
+              >
             </div>
             <div class="desc">
-              <w-input v-model="newTodoDesc" type="text" name="todoDesc" id="todoDesc">Todo Beschreibung:</w-input>
+              <w-input
+                v-model="newTodoDesc"
+                type="text"
+                name="todoDesc"
+                id="todoDesc"
+                >Todo Beschreibung:</w-input
+              >
             </div>
             <w-button id="addTodo" type="submit">Todo speichern</w-button>
+            <div class="clearAllCompleted">
+              <w-button
+                :disabled="!isCompletedTodos"
+                @click="deleteAllCompleted"
+                >Delete all completed Todos</w-button
+              >
+            </div>
           </form>
         </w-transition-fade>
-    </aside>
-    <main class="grow">
-      
-      
-
-        <draggable v-model="todos" class="list-group"
-        :component-data="{
-          tag: 'div',
-          type: 'transition-group',
-          name: !drag ? 'flip-list' : null
-        }" 
-        v-bind="dragOptions"
-        @start="drag = true"
-        @end="drag = false"
-        item-key="id">
-         <template #item="{ element }">
-           <div class="list-group-item">
-        <div @click="toggleTodo(element)" :class="{done: element.done}" class="todo" :style="[element.done ? {'opacity':'0.5'}: '']">
-          <w-card>
-            <template #title>
-              <w-toolbar>
-                  <w-checkbox @click="toggleTodo(element)" v-model="element.done" class="mr5"></w-checkbox>
-                <div v-if="!element.edit" class="title2">{{element.todoName}}</div>
-                <w-input @click.stop v-if="element.edit" v-model="element.todoName" outline class="form-control"></w-input>
-                <div class="spacer"></div>
-                <span @click="removeTodo(element)" class="mdi mdi-close ml2 removeTodo"></span>
-              </w-toolbar>
-            </template>
-            <template #actions>
-              <div class="editTodo">
-                <w-button @click.stop="editTodo(element)" title="Todo bearbeiten"><w-icon class="mr1">mdi mdi-file-document-edit</w-icon><span v-if="element.edit">Speichern</span></w-button>
-              </div>
-              <div class="spacer"></div>
-              <div class="created">
-                <div class="createdAt mr2">erstellt am</div>
-                <div class="timeCreated">{{element.created}}</div>
-              </div>
-            </template>
-            <p v-if="!element.edit" class="todoDesc">{{element.todoDesc}}</p>
-            <w-input @click.stop v-if="element.edit" v-model="element.todoDesc" outline class="form-control"></w-input>
-          </w-card>
       </div>
-           </div>
-         </template>
+
+      <div class="xs10 pa1">
+        <draggable
+          v-model="todos"
+          class="list-group"
+          :component-data="{
+            tag: 'div',
+            type: 'transition-group',
+            name: !drag ? 'flip-list' : null,
+          }"
+          v-bind="dragOptions"
+          @start="drag = true"
+          @end="drag = false"
+          item-key="id"
+        >
+          <template #item="{ element }">
+            <div class="list-group-item">
+              <div
+                @click="toggleTodo(element)"
+                :class="{ done: element.done }"
+                class="todo"
+                :style="[element.done ? { opacity: '0.5' } : '']"
+              >
+                <w-card>
+                  <template #title>
+                    <w-toolbar>
+                      <w-checkbox
+                        @click="toggleTodo(element)"
+                        v-model="element.done"
+                        class="mr5"
+                      ></w-checkbox>
+                      <div v-if="!element.edit" class="title2">
+                        {{ element.todoName }}
+                      </div>
+                      <w-input
+                        @click.stop
+                        v-if="element.edit"
+                        v-model="element.todoName"
+                        outline
+                        class="form-control"
+                      ></w-input>
+                      <div class="spacer"></div>
+                      <span
+                        @click="removeTodo(element)"
+                        class="mdi mdi-close ml2 removeTodo"
+                      ></span>
+                    </w-toolbar>
+                  </template>
+                  <template #actions>
+                    <div class="editTodo">
+                      <w-button
+                        @click.stop="editTodo(element)"
+                        title="Todo bearbeiten"
+                        ><w-icon class="mr1">mdi mdi-file-document-edit</w-icon
+                        ><span v-if="element.edit">Speichern</span></w-button
+                      >
+                    </div>
+                    <div class="spacer"></div>
+                    <div class="created">
+                      <div class="createdAt mr2">erstellt am</div>
+                      <div class="timeCreated">{{ element.created }}</div>
+                    </div>
+                  </template>
+                  <p v-if="!element.edit" class="todoDesc">
+                    {{ element.todoDesc }}
+                  </p>
+                  <w-input
+                    @click.stop
+                    v-if="element.edit"
+                    v-model="element.todoDesc"
+                    outline
+                    class="form-control"
+                  ></w-input>
+                </w-card>
+              </div>
+            </div>
+          </template>
         </draggable>
-    </main>
-</w-flex>
-</w-app>
+      </div>
+    </w-flex>
+  </w-app>
 </template>
 
 <script>
@@ -202,7 +249,7 @@ body {
 }
 
 .todo {
-  width: 40%;
+  width: 100%;
   margin-left: 50px;
   margin-bottom: 15px;
 }
