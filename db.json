@@ -1,0 +1,48 @@
+{
+  "todos": [
+    {
+      "id": 0,
+      "todoName": "Go to the gym",
+      "todoDesc": "Walk the dog for 30 min",
+      "created": "17.12.2021 22:45 Uhr",
+      "done": false
+    },
+    {
+      "id": 1,
+      "todoName": "Walk the dog",
+      "todoDesc": "Walk the dog for 30 min",
+      "created": "17.12.2021 22:45 Uhr",
+      "done": true
+    },
+    {
+      "id": 2,
+      "todoName": "Get some pizza",
+      "todoDesc": "Walk the dog for 30 min",
+      "created": "17.12.2021 22:45 Uhr",
+      "done": false
+    },
+    {
+      "id": 3,
+      "todoName": "Finish this project",
+      "todoDesc": "Walk the dog for 30 min",
+      "created": "17.12.2021 22:45 Uhr",
+      "done": true
+    },
+    {
+      "todoName": "TEst123",
+      "todoDesc": "sdsd",
+      "created": "17.12.2021 23:1 Uhr",
+      "edit": false,
+      "done": false,
+      "id": 4
+    },
+    {
+      "todoName": "sdadas",
+      "todoDesc": "asdasd",
+      "created": "17.12.2021 23:1 Uhr",
+      "edit": false,
+      "done": false,
+      "id": 5
+    }
+  ]
+}

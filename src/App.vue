@@ -1,27 +1,27 @@
 <template>
   <div id="app">
+    <h1>TODO APP</h1>
     <div class="row">
-      <div class="col-6 mt-5">
-        <div class="input-group m-2">
-          <span class="input-group-text" id="basic-addon1">Todo Name</span>
+      <div class="col-3 mt-5">
+        <div class="m-2">
+          <label for="todoName">Todo name</label>
           <input
             v-model="newTodoName"
             type="text"
             name="todoName"
             id="todoName"
             class="form-control"
-          />
+            required>
         </div>
-        <div class="input-group m-2">
-          <span class="input-group-text" id="basic-addon2"
-            >Todo Beschreibung</span
-          >
+        <div class="m-2">
+          <label for="todoDesc">Todo Beschreibung</label>
           <input
             v-model="newTodoDesc"
             type="text"
             name="todoDesc"
             id="todoDesc"
             class="form-control"
+            required
           />
         </div>
         <button
@@ -34,7 +34,7 @@
         </button>
       </div>
 
-      <div class="col-6 mt-1">
+      <div class="col-9 mt-1">
         <div class="row px-5 mb-2">
           <div class="col-5">
             <div class="todoBadge">
@@ -58,6 +58,7 @@
             </div>
           </div>
         </div>
+        <p id="emptyListString" class="m-5" v-if="todos.length <= 0">Erstelle ein Todo</p>
         <draggable
           v-model="todos"
           class="list-group"
@@ -126,6 +127,7 @@
                     <div class="col-9">
                       <button
                         type="button"
+                        :disabled="element.done"
                         class="btn btn-primary"
                         @click.stop="editTodo(element)"
                         title="Todo bearbeiten"
@@ -154,6 +156,9 @@
 <script>
 import { ref, computed } from "vue";
 import draggable from "vuedraggable";
+import axios from "axios";
+
+const baseUrl = "http://localhost:3001/todos";
 
 export default {
   components: {
@@ -163,6 +168,15 @@ export default {
     return {
       drag: false,
     };
+  },
+  async created() {
+    try {
+      const res = await axios.get(baseUrl);
+
+      this.todos = res.data;
+    } catch (e) {
+      console.error(e);
+    }
   },
   setup() {
     const newTodoName = ref("");
@@ -189,7 +203,7 @@ export default {
       };
     });
 
-    function addTodo() {
+    function createDate() {
       var d = new Date();
       var curr_date = d.getDate();
       var curr_month = d.getMonth() + 1; //Months are zero based
@@ -207,24 +221,34 @@ export default {
         ":" +
         minutes +
         " Uhr";
+      return time;
+    }
 
-      todos.value.push({
-        id: Date.now(),
-        done: false,
+    async function addTodo() {
+      const res = await axios.post(baseUrl, {
         todoName: newTodoName.value,
         todoDesc: newTodoDesc.value,
-        created: time,
+        created: createDate(),
         edit: false,
+        done: false,
       });
+
+      this.todos = [...this.todos, res.data];
+
       newTodoName.value = "";
       newTodoDesc.value = "";
     }
 
     function toggleTodo(todo) {
       todo.done = !todo.done;
+      todo.edit = false;
     }
 
     function removeTodo(todo) {
+      // axios.delete(baseUrl + id).then((result) => {
+      //   this.todos = result.data;
+      // });
+      // // this.todos = [...this.todos, res.data];
       todos.value = todos.value.filter((t) => t !== todo);
     }
 
