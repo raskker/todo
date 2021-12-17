@@ -251,7 +251,17 @@ export default {
     }
 
     function deleteAllCompleted() {
-      todos.value = todos.value.filter((t) => t.done === false);
+      var completeTodos = this.todos.filter((t) => t.done === true);
+      completeTodos.forEach((todo) => {
+        axios.delete(baseUrl + todo.id).then(() => {
+          this.todos = this.todos.filter(
+            (todo) =>
+              !completeTodos.some(
+                (completedTodo) => todo.id === completedTodo.id
+              )
+          );
+        });
+      });
     }
 
     function editTodo(todo) {
