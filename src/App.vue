@@ -103,7 +103,7 @@
                   </div>
                   <div class="col-1">
                     <span
-                      @click="removeTodo(element)"
+                      @click="removeTodo(element.id)"
                       class="mdi mdi-close ml2 removeTodo"
                     ></span>
                   </div>
@@ -158,7 +158,7 @@ import { ref, computed } from "vue";
 import draggable from "vuedraggable";
 import axios from "axios";
 
-const baseUrl = "http://localhost:3001/todos";
+const baseUrl = "http://localhost:3001/todos/";
 
 export default {
   components: {
@@ -244,12 +244,10 @@ export default {
       todo.edit = false;
     }
 
-    function removeTodo(todo) {
-      // axios.delete(baseUrl + id).then((result) => {
-      //   this.todos = result.data;
-      // });
-      // // this.todos = [...this.todos, res.data];
-      todos.value = todos.value.filter((t) => t !== todo);
+    function removeTodo(id) {
+      axios.delete(baseUrl + id).then(() => {
+        this.todos = this.todos.filter((t) => t.id !== id);
+      });
     }
 
     function deleteAllCompleted() {
