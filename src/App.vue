@@ -103,7 +103,7 @@
                   </div>
                   <div class="col-1">
                     <span
-                      @click="removeTodo(element.id)"
+                      @click.stop="removeTodo(element.id)"
                       class="mdi mdi-close ml2 removeTodo"
                     ></span>
                   </div>
@@ -242,6 +242,9 @@ export default {
     function toggleTodo(todo) {
       todo.done = !todo.done;
       todo.edit = false;
+      axios.put(baseUrl + todo.id, todo).then(() => {
+        console.log(todo);
+      });
     }
 
     function removeTodo(id) {
@@ -265,7 +268,15 @@ export default {
     }
 
     function editTodo(todo) {
-      todo.edit = !todo.edit;
+      if (todo.edit === true) {
+        todo.edit = false;
+        axios.put(baseUrl + todo.id, todo).then(() => {
+          console.log(todo);
+        });
+      } else {
+        todo.edit = true;
+      }
+      // todo.edit = !todo.edit;
     }
 
     return {
