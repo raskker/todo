@@ -2,13 +2,7 @@
   <div id="app">
     <h1>TODO APP</h1>
     <div class="row">
-      <Form
-        :testName="newTodoName"
-        :testDesc="newTodoDesc"
-        @input-desc="testDesc = $event"
-        @input-name="testName = $event"
-      />
-
+      <Form />
       <div class="col-9 mt-1">
         <div class="row px-5 mb-2">
           <div class="col-5">
@@ -135,9 +129,7 @@ import { ref, computed } from "vue";
 import draggable from "vuedraggable";
 import axios from "axios";
 import Form from "./components/Form.vue";
-
 const baseUrl = "http://localhost:3001/todos/";
-
 export default {
   components: {
     draggable,
@@ -182,45 +174,10 @@ export default {
       };
     });
 
-    function createDate() {
-      var d = new Date();
-      var curr_date = d.getDate();
-      var curr_month = d.getMonth() + 1; //Months are zero based
-      var curr_year = d.getFullYear();
-      var minutes = d.getMinutes();
-      var hours = d.getHours();
-      var time =
-        curr_date +
-        "." +
-        curr_month +
-        "." +
-        curr_year +
-        " " +
-        hours +
-        ":" +
-        minutes +
-        " Uhr";
-      return time;
-    }
-
-    async function addTodo() {
-      const res = await axios.post(baseUrl, {
-        todoName: this.testName,
-        todoDesc: this.testDesc,
-        created: createDate(),
-        edit: false,
-        done: false,
-      });
-
-      this.todos = [...this.todos, res.data];
-
-      newTodoName.value = "";
-      newTodoDesc.value = "";
-    }
-
     function toggleTodo(todo) {
       todo.done = !todo.done;
       todo.edit = false;
+      console.log(baseUrl);
       axios.put(baseUrl + todo.id, todo).then(() => {
         console.log(todo);
       });
@@ -255,14 +212,12 @@ export default {
       } else {
         todo.edit = true;
       }
-      // todo.edit = !todo.edit;
     }
 
     return {
       todos,
       newTodoName,
       newTodoDesc,
-      addTodo,
       toggleTodo,
       removeTodo,
       deleteAllCompleted,
