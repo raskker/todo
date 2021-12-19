@@ -4,34 +4,12 @@
     <div class="row">
       <Form />
       <div class="col-9 mt-1">
-        <div class="row px-5 mb-2">
-          <div class="col-5">
-            <div class="todoBadge">
-              <button type="button" class="btn btn-primary">
-                <i class="mdi mdi-check-circle-outline"></i>
-                Open Todos
-                <span class="badge badge-secondary">{{ countOpenTodos }}</span>
-              </button>
-            </div>
-          </div>
-          <div class="col-5">
-            <div class="clearAllCompleted">
-              <button
-                type="button"
-                class="btn btn-primary"
-                v-show="isCompletedTodos"
-                @click="deleteAllCompleted"
-              >
-                Delete all completed Todos
-              </button>
-            </div>
-          </div>
-        </div>
-        <p id="emptyListString" class="m-5" v-if="todos.length <= 0">
+      <ButtonToolbar/>
+        <p id="emptyListString" class="m-5" v-if="store.state.testTodos.length <= 0">
           Erstelle ein Todo
         </p>
         <draggable
-          v-model="todos"
+          v-model="store.state.testTodos"
           class="list-group"
           :component-data="{
             tag: 'div',
@@ -125,45 +103,36 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
+import { ref, computed, provide } from "vue";
 import draggable from "vuedraggable";
 import axios from "axios";
 import Form from "./components/Form.vue";
 const baseUrl = "http://localhost:3001/todos/";
+import store from "@/store";
+import getTodos from "./composables/getTodos";
+import ButtonToolbar from "./components/ButtonToolbar.vue";
 export default {
   components: {
     draggable,
     Form,
+    ButtonToolbar,
   },
   data() {
     return {
       drag: false,
     };
   },
-  async created() {
-    try {
-      const res = await axios.get(baseUrl);
-
-      this.todos = res.data;
-    } catch (e) {
-      console.error(e);
-    }
-  },
   setup() {
+    provide("store", store);
+    const { todos, load } = getTodos();
     const newTodoName = ref("");
     const newTodoDesc = ref("");
-    const todos = ref([]);
     const addTodoPressed = ref(false);
-    const countOpenTodos = computed(() => {
-      return todos.value.filter((t) => t.done != true).length;
-    });
-    const isCompletedTodos = computed(() => {
-      var bool = false;
-      if (todos.value.filter((t) => t.done === true).length > 0) {
-        bool = true;
-      }
-      return bool;
-    });
+
+    load();
+
+    store.state.testTodos = todos;
+    console.log(store.state.testTodos);
 
     const dragOptions = computed(() => {
       return {
@@ -185,21 +154,9 @@ export default {
 
     function removeTodo(id) {
       axios.delete(baseUrl + id).then(() => {
-        this.todos = this.todos.filter((t) => t.id !== id);
-      });
-    }
-
-    function deleteAllCompleted() {
-      var completeTodos = this.todos.filter((t) => t.done === true);
-      completeTodos.forEach((todo) => {
-        axios.delete(baseUrl + todo.id).then(() => {
-          this.todos = this.todos.filter(
-            (todo) =>
-              !completeTodos.some(
-                (completedTodo) => todo.id === completedTodo.id
-              )
-          );
-        });
+        store.state.testTodos = store.state.testTodos.filter(
+          (t) => t.id !== id
+        );
       });
     }
 
@@ -220,12 +177,10 @@ export default {
       newTodoDesc,
       toggleTodo,
       removeTodo,
-      deleteAllCompleted,
       addTodoPressed: addTodoPressed,
-      countOpenTodos,
-      isCompletedTodos,
       dragOptions,
       editTodo,
+      store,
     };
   },
 };
