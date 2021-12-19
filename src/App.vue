@@ -2,37 +2,12 @@
   <div id="app">
     <h1>TODO APP</h1>
     <div class="row">
-      <div class="col-3 mt-5">
-        <div class="m-2">
-          <label for="todoName">Todo name</label>
-          <input
-            v-model="newTodoName"
-            type="text"
-            name="todoName"
-            id="todoName"
-            class="form-control"
-            required>
-        </div>
-        <div class="m-2">
-          <label for="todoDesc">Todo Beschreibung</label>
-          <input
-            v-model="newTodoDesc"
-            type="text"
-            name="todoDesc"
-            id="todoDesc"
-            class="form-control"
-            required
-          />
-        </div>
-        <button
-          type="button"
-          class="btn btn-primary m-2"
-          id="addTodo"
-          @click="addTodo"
-        >
-          Todo speichern
-        </button>
-      </div>
+      <Form
+        :testName="newTodoName"
+        :testDesc="newTodoDesc"
+        @input-desc="testDesc = $event"
+        @input-name="testName = $event"
+      />
 
       <div class="col-9 mt-1">
         <div class="row px-5 mb-2">
@@ -58,7 +33,9 @@
             </div>
           </div>
         </div>
-        <p id="emptyListString" class="m-5" v-if="todos.length <= 0">Erstelle ein Todo</p>
+        <p id="emptyListString" class="m-5" v-if="todos.length <= 0">
+          Erstelle ein Todo
+        </p>
         <draggable
           v-model="todos"
           class="list-group"
@@ -157,12 +134,14 @@
 import { ref, computed } from "vue";
 import draggable from "vuedraggable";
 import axios from "axios";
+import Form from "./components/Form.vue";
 
 const baseUrl = "http://localhost:3001/todos/";
 
 export default {
   components: {
     draggable,
+    Form,
   },
   data() {
     return {
@@ -226,8 +205,8 @@ export default {
 
     async function addTodo() {
       const res = await axios.post(baseUrl, {
-        todoName: newTodoName.value,
-        todoDesc: newTodoDesc.value,
+        todoName: this.testName,
+        todoDesc: this.testDesc,
         created: createDate(),
         edit: false,
         done: false,
