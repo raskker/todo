@@ -1,13 +1,11 @@
 <template>
   <div id="app">
-    <h1>TODO APP</h1>
-    <div class="row">
+    <div class="row mt-4">
       <Form />
       <div class="col-9 mt-1">
-      <ButtonToolbar v-model:searchValue="searchValue"/>
-      <TodoList :searchedTodos="searchedTodos"/>
+        <ButtonToolbar v-model:searchValue="searchValue" />
+        <TodoList :searchedTodos="searchedTodos" />
       </div>
-
     </div>
   </div>
 </template>
@@ -55,21 +53,13 @@ export default {
 </script>
 
 <style>
-header,
-aside,
-main {
-  margin: 4px;
-  padding: 12px;
-}
-
-body {
+/* body {
   font-family: sans-serif;
   padding-top: 1em;
   padding-bottom: 1em;
   font-size: 2em;
   width: 80%;
-  margin: 0 auto;
-}
+} */
 
 .todo {
   width: 100%;
@@ -108,5 +98,11 @@ body {
 
 .card {
   cursor: pointer;
+}
+
+.headerIcon {
+  font-size: 30px;
+  margin-right: 5px;
+  vertical-align: middle;
 }
 </style>

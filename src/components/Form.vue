@@ -1,5 +1,5 @@
 <template>
-    <div class="col-3 mt-5">
+    <div class="col-3">
         <div class="m-2">
           <label for="todoName">Todo name</label>
           <input v-model="todoName"
