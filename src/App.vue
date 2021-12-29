@@ -4,11 +4,8 @@
     <div class="row">
       <Form />
       <div class="col-9 mt-1">
-      <ButtonToolbar/>
-        <p id="emptyListString" class="m-5" v-if="store.state.testTodos.length <= 0">
-          Erstelle ein Todo
-        </p>
-      <TodoList/>
+      <ButtonToolbar v-model:searchValue="searchValue"/>
+      <TodoList :searchedTodos="searchedTodos"/>
       </div>
 
     </div>
@@ -16,7 +13,7 @@
 </template>
 
 <script>
-import { ref, provide } from "vue";
+import { ref, provide, computed } from "vue";
 import Form from "./components/Form.vue";
 import store from "@/store";
 import getTodos from "./composables/getTodos";
@@ -29,24 +26,29 @@ export default {
     ButtonToolbar,
     TodoList,
   },
-  data() {
-    return {
-      drag: false,
-    };
-  },
   setup() {
     provide("store", store);
     const { todos, load } = getTodos();
     const addTodoPressed = ref(false);
+    const searchValue = ref("");
 
     load();
-
+    const searchedTodos = computed(() => {
+      return todos.value.filter((todo) => {
+        var bool =
+          todo.todoName.match(searchValue.value) ||
+          todo.todoDesc.match(searchValue.value);
+        return bool;
+      });
+    });
     store.state.testTodos = todos;
 
     return {
       todos,
       addTodoPressed: addTodoPressed,
       store,
+      searchedTodos,
+      searchValue,
     };
   },
 };
@@ -105,9 +107,6 @@ body {
 }
 
 .card {
-  cursor: move;
-}
-.card i {
   cursor: pointer;
 }
 </style>

@@ -1,27 +1,38 @@
 <template>
-  <div class="row px-5 mb-2">
-          <div class="col-5">
-            <div class="todoBadge">
-              <button type="button" class="btn btn-primary">
-                <i class="mdi mdi-check-circle-outline"></i>
-                Open Todos
-                <span class="badge badge-secondary">{{ countOpenTodos }}</span>
-              </button>
-            </div>
-          </div>
-          <div class="col-5">
-            <div class="clearAllCompleted">
-              <button
-                type="button"
-                class="btn btn-primary"
-                v-show="isCompletedTodos"
-                @click="deleteAllCompleted"
-              >
-                Delete all completed Todos
-              </button>
-            </div>
-          </div>
-        </div>
+  <div class="px-5 mb-2">
+    <div class="d-flex flex-row">
+      <div class="d-flex searchInput me-3">
+        <span class="searchIcon">
+          <i class="mdi mdi-magnify"></i>
+        </span>
+        <input
+          type="text"
+          name="search"
+          id="search"
+          class="form-control"
+          :value="searchValue"
+          @input="($event) => $emit('update:searchValue', $event.target.value)"
+        />
+      </div>
+      <div class="todoBadge me-3">
+        <button type="button" class="btn btn-primary">
+          <i class="mdi mdi-check-circle-outline"></i>
+          Open Todos
+          <span class="badge badge-secondary">{{ countOpenTodos }}</span>
+        </button>
+      </div>
+      <div class="clearAllCompleted me-3">
+        <button
+          type="button"
+          class="btn btn-primary"
+          v-show="isCompletedTodos"
+          @click="deleteAllCompleted"
+        >
+          Delete all completed Todos
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -29,6 +40,9 @@ import { computed, inject } from "vue";
 const baseUrl = "http://localhost:3001/todos/";
 import axios from "axios";
 export default {
+  props: {
+    searchValue: String,
+  },
   setup() {
     const store = inject("store");
     const countOpenTodos = computed(() => {
@@ -66,4 +80,8 @@ export default {
 </script>
 
 <style>
+.searchIcon {
+  font-size: 25px;
+  margin-right: 4px;
+}
 </style>

@@ -1,103 +1,91 @@
 <template>
-  <draggable
-    v-model="store.state.testTodos"
-    class="list-group"
-    :component-data="{
-      tag: 'div',
-      type: 'transition-group',
-      name: !drag ? 'flip-list' : null,
-    }"
-    v-bind="dragOptions"
-    @start="drag = true"
-    @end="drag = false"
-    item-key="id"
-  >
-    <template #item="{ element }">
-      <div
-        @click="toggleTodo(element)"
-        :class="{ done: element.done }"
-        class="card todo"
-        :style="[element.done ? { opacity: '0.5' } : '']"
-      >
-        <div class="card-header">
-          <div class="row">
-            <div class="col-1">
-              <input
-                :value="element.done"
-                type="checkbox"
-                class="form-check-input"
-                v-model="element.done"
-              />
+  <div v-if="searchedTodos.length <= 0" class="noTodosFound m-5">
+    <p >Keine Todos gefunden!</p>
+  </div>
+  <div v-for="todo in searchedTodos" v-bind:key="todo.id">
+    <div
+      @click="toggleTodo(todo)"
+      :class="{ done: todo.done }"
+      class="card todo"
+      :style="[todo.done ? { opacity: '0.5' } : '']"
+    >
+      <div class="card-header">
+        <div class="row">
+          <div class="col-1">
+            <input
+              :value="todo.done"
+              type="checkbox"
+              class="form-check-input"
+              v-model="todo.done"
+            />
+          </div>
+          <div class="col-10">
+            <div v-if="!todo.edit" class="title2">
+              {{ todo.todoName }}
             </div>
-            <div class="col-10">
-              <div v-if="!element.edit" class="title2">
-                {{ element.todoName }}
-              </div>
+            <input
+              @click.stop
+              v-if="todo.edit"
+              v-model="todo.todoName"
+              outline
+              class="form-control"
+            />
+          </div>
+          <div class="col-1">
+            <span
+              @click.stop="removeTodo(todo.id)"
+              class="mdi mdi-close ml2 removeTodo"
+            ></span>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-text">
+          <div class="row">
+            <div class="col-12 mb-3">
+              <p v-if="!todo.edit" class="todoDesc">
+                {{ todo.todoDesc }}
+              </p>
               <input
                 @click.stop
-                v-if="element.edit"
-                v-model="element.todoName"
+                v-if="todo.edit"
+                v-model="todo.todoDesc"
                 outline
                 class="form-control"
               />
             </div>
-            <div class="col-1">
-              <span
-                @click.stop="removeTodo(element.id)"
-                class="mdi mdi-close ml2 removeTodo"
-              ></span>
+            <div class="col-9">
+              <button
+                type="button"
+                :disabled="todo.done"
+                class="btn btn-primary"
+                @click.stop="editTodo(todo)"
+                title="Todo bearbeiten"
+              >
+                <i v-if="!todo.edit" class="mdi mdi-file-document-edit"></i
+                ><span v-if="todo.edit">Speichern</span>
+              </button>
             </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="card-text">
-            <div class="row">
-              <div class="col-12 mb-3">
-                <p v-if="!element.edit" class="todoDesc">
-                  {{ element.todoDesc }}
-                </p>
-                <input
-                  @click.stop
-                  v-if="element.edit"
-                  v-model="element.todoDesc"
-                  outline
-                  class="form-control"
-                />
-              </div>
-              <div class="col-9">
-                <button
-                  type="button"
-                  :disabled="element.done"
-                  class="btn btn-primary"
-                  @click.stop="editTodo(element)"
-                  title="Todo bearbeiten"
-                >
-                  <i class="mdi mdi-file-document-edit"></i
-                  ><span v-if="element.edit">Speichern</span>
-                </button>
-              </div>
-              <div class="col-3">
-                <div class="created">
-                  <div class="createdAt mr2">erstellt am</div>
-                  <div class="timeCreated">{{ element.created }}</div>
-                </div>
+            <div class="col-3">
+              <div class="created">
+                <div class="createdAt mr2">erstellt am</div>
+                <div class="timeCreated">{{ todo.created }}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </template>
-  </draggable>
+    </div>
+  </div>
 </template>
 
 <script>
 const baseUrl = "http://localhost:3001/todos/";
-import { computed, inject } from "vue";
-import draggable from "vuedraggable";
+import { inject } from "vue";
 import axios from "axios";
 export default {
-  components: {
-    draggable,
+  props: {
+    searchedTodos: Object,
   },
   data() {
     return {
@@ -107,14 +95,6 @@ export default {
 
   setup() {
     const store = inject("store");
-    const dragOptions = computed(() => {
-      return {
-        animation: 200,
-        group: "description",
-        disabled: false,
-        ghostClass: "ghost",
-      };
-    });
 
     function toggleTodo(todo) {
       todo.done = !todo.done;
@@ -147,7 +127,6 @@ export default {
       store,
       toggleTodo,
       removeTodo,
-      dragOptions,
       editTodo,
     };
   },
